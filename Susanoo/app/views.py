@@ -3,7 +3,7 @@ from django.template import Context
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, RequestContext
 from django.views.generic import View
-
+from Susanoo.app import models
 
 class Home(View):
     def get(self, request):
@@ -17,7 +17,8 @@ class Home(View):
 class Tool(View):
     def get(self, request):
         t = get_template('tool/template.html')
-        return HttpResponse('Hello, World!')
+        k = models.Weather()
+        return HttpResponse(k.x)
 
     def post(self, request):
         pass

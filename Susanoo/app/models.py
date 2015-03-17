@@ -3,9 +3,9 @@ from django.template import Template
 import sys
 import urllib
 import json
-import instance.
+from Susanoo import settings
 
 # Create your models here.
 
 class Weather(models.Model):
-    print "aa"
+    x=settings.API_KEY
