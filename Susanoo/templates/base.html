@@ -4,9 +4,9 @@
 <title>Susanoo - {%block pagetitle %}{% endblock %}</title>
 <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
  <link href="{{ STATIC_URL }}css/style.css" rel="stylesheet" media="screen">
- 
+  {% block mapscript %} {% endblock %}
 </head>
-<body>
+<body onload="initialize()">
     <div id="wrapper">
         <div id="header">
         	  <img src="{{ STATIC_URL }}images/header.png" width="1400px">

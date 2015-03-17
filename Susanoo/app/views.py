@@ -3,10 +3,9 @@ from django.template import Context
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, RequestContext
 from django.views.generic import View
-from Susanoo.app import models
-from Susanoo.gmapi import maps
 from Susanoo.gmapi.forms.widgets import GoogleMap
 from django import forms
+from Susanoo import settings
 
 class Home(View):
     def get(self, request):
@@ -19,7 +18,7 @@ class Home(View):
 
 class Tool(View):
     def get(self, request):
-        gmap = maps.Map(opts = {
+        '''gmap = maps.Map(opts = {
         'center': maps.LatLng(34.687428,133.916473),
         'mapTypeId': maps.MapTypeId.ROADMAP,
         'zoom': 6,
@@ -36,8 +35,10 @@ class Tool(View):
         info = maps.InfoWindow({'content': 'Hello!',
         'disableAutoPan': True
         })
-        info.open(gmap, marker)
-        context = RequestContext(request, {'form': MapForm(initial={'map': gmap})})
+        info.open(gmap, marker)'''
+        
+        map_key = settings.MAP_KEY
+        context = RequestContext(request, {'map_key': map_key})
         return render_to_response('tool/template.html', context)
     
         '''t= get_template('tool/template.html')
