@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, RequestContext
 from django.views.generic import View
 from Susanoo.app import models
+from Susanoo.gmapi import maps
+from Susanoo.gmapi.forms.widgets import GoogleMap
+from django import forms
 
 class Home(View):
     def get(self, request):
@@ -16,9 +19,35 @@ class Home(View):
 
 class Tool(View):
     def get(self, request):
-        t = get_template('tool/template.html')
+        gmap = maps.Map(opts = {
+        'center': maps.LatLng(34.687428,133.916473),
+        'mapTypeId': maps.MapTypeId.ROADMAP,
+        'zoom': 6,
+        'mapTypeControlOptions': {
+             'style': maps.MapTypeControlStyle.DROPDOWN_MENU
+             },
+        })
+        marker = maps.Marker(opts = {
+                                     'map': gmap,
+                                     'position': maps.LatLng(34.687428,133.916473),
+                                     })
+        maps.event.addListener(marker, 'mouseover', 'myobj.markerOver')
+        maps.event.addListener(marker, 'mouseout', 'myobj.markerOut')
+        info = maps.InfoWindow({'content': 'Hello!',
+        'disableAutoPan': True
+        })
+        info.open(gmap, marker)
+        context = RequestContext(request, {'form': MapForm(initial={'map': gmap})})
+        return render_to_response('tool/template.html', context)
+    
+        '''t= get_template('tool/template.html')
         k = models.Weather()
-        return HttpResponse(k.x)
-
+        return HttpResponse(k.response)
+        '''
+    
+class MapForm(forms.Form):
+    map = forms.Field(widget=GoogleMap(attrs={'width':900, 'height':600}))
+ 
+ 
     def post(self, request):
         pass
