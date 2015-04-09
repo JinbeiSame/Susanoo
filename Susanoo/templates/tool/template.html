@@ -4,16 +4,89 @@
 {% block mapscript %}
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(-34.397, 150.644),
-          zoom: 8,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
-            mapOptions);
-      }
-    </script>
+function initialize() {
+	var OSAKA = new google.maps.LatLng(34.6937378, 135.50216509999996);
+	var TOKYO = new google.maps.LatLng(35.6894875, 139.69170639999993);
+	var SAPPORO = new google.maps.LatLng(43.0620958, 141.3543763);
+	var FUKUOKA = new google.maps.LatLng(33.5903547, 130.40171550000002);
+	
+	var mapOptions = {
+		center: new google.maps.LatLng(34.6937378, 135.50216509999996),
+		zoom: 5,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	var map_c = document.getElementById("map_canvas");
+	var map = new google.maps.Map(map_c,mapOptions);
+	var frm = document.createElement("div");
+	var s='';
+	s += '<input id="address" type="textbox" value="" size="50" />';
+	s += '<input type="button" value="set" id="btn_address" /><br />';
+	s += 'lat:<input type="text" name="latitude" id="latitude" size="40" /><br />';
+	s += 'lng:<input type="text" name="longitude" id="longitude" size="40" />';
+	s += '<input type="button" value="set" id="btn_LatLng" />';
+	frm.innerHTML=s;
+	map_c.parentNode.appendChild(frm);
+	var geocoder = new google.maps.Geocoder();
+
+	//Output
+	var outLatLng = function (lat,lng){
+		document.getElementById('latitude').value =lat;
+		document.getElementById('longitude').value = lng;
+	}
+	var marker1 = new google.maps.Marker({
+			position: OSAKA, 
+			map: map,
+			draggable:true
+		});
+	var marker2 = new google.maps.Marker({
+		position: TOKYO, 
+		map: map,
+		draggable:true
+	});
+	var marker3 = new google.maps.Marker({
+		position: FUKUOKA, 
+		map: map,
+		draggable:true
+	});
+	var marker4 = new google.maps.Marker({
+		position: SAPPORO, 
+		map: map,
+		draggable:true
+	});
+	<!--marker.setVisible(false);-->
+
+	
+	google.maps.event.addListener(marker, 'click', function(event) {
+		<!--marker.setVisible(false);-->
+		outLatLng('','');
+	});
+	google.maps.event.addListener(marker, 'dragend', function(event) {
+		placeMarker(event.latLng);
+	});
+
+	
+	//latitude & longitude
+	document.getElementById("btn_LatLng").onclick = function () {
+		var LatLngAddressLocation =  new google.maps.LatLng(document.getElementById('latitude').value, document.getElementById('longitude').value);
+		placeMarker(LatLngAddressLocation);
+		map.setCenter(LatLngAddressLocation);
+	}
+
+	document.getElementById("btn_address").onclick=function(){
+		var address = document.getElementById("address").value;
+		if (geocoder) {
+			geocoder.geocode( { 'address': address}, function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					placeMarker(results[0].geometry.location)
+					map.setCenter(results[0].geometry.location);
+				} else {
+					alert("Geocode was not successful for the following reason: " + status);
+				}
+			});
+		}
+	}
+}
+</script>
 {% endblock %} 
 {% block title %}{% endblock %}
 {% block primary %}
